@@ -4,6 +4,6 @@
 int main() {
 
     testSimpleStreams();
-
+    testGetEOFtk();
     return 0;
 }

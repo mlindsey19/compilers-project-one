@@ -8,14 +8,14 @@
 #define EOL '\n'
 #define SPACE ' '
 
-enum tokenID{
+enum TokenID{
     EOFtk,
     EOLtk
 };
 typedef struct {
-    enum tokenID  id;
+    enum TokenID  id;
     char instance[32];
     int lineNumber;
-}token;
+}Token;
 
 #endif //SCANNER_TOKEN_H
