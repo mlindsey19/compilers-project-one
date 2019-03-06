@@ -7,6 +7,8 @@
 
 #include "token.h"
 
-Token scanner(FILE * stream);
+void scanner(FILE * stream);
+extern Token *tokenList;
+
 
 #endif //SCANNER_SCANNER_H
