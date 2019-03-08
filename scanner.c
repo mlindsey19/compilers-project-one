@@ -6,38 +6,71 @@
 #include "scanner.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <memory.h>
 
-void finalState(int);
-void checkSpace(int *);
+static void finalState(char);
+static void checkSpace(int *);
+static Token newToken(enum TokenID);
+
 
 
 Token * tokenList;
-typedef struct {int ch,ln,tk;} Count;
+typedef struct {int strlen,line,tk;} Count;
 static  Count count = {0 ,0,0};
+char instance[64];
 
 
 void scanner(FILE * stream){
     int i, space;
-    int character;
+    char character;
 
     space = 32;
     tokenList = (Token *)malloc(sizeof(Token) * space);
-    for(i = 0; i < 1;i++) {
-        checkSpace(&space);
+    for(i = 0; i < 2;i++) {
+        //    checkSpace(&space);
         character = getc(stream);
-        if (character == EOF)
-            finalState(character);
+        finalState(character);
+        if (character == EOF) {
+            count.tk = 0;
+            count.line = 0;
+            break;
+        }
+
     }
 }
-void finalState(int character){
+/*********************************************
+ * final state -
+ * determine which token to create and append
+ * to token array
+ ********************************************/
+static void finalState(char character){
+
 
     if(character == EOF) {
-        Token token = (Token) {EOFtk, "", count.ln};
-        tokenList[count.tk++] = token;
+        count.strlen = 5;
+        strncpy(instance, "EOFtk", count.strlen);
+        tokenList[count.tk++] = newToken(EOFtk);
+    }else if(character >= 48 && character <= 57){
+        instance[count.strlen++] = character;
+        tokenList[count.tk++] = newToken(INTtk);
+
     }
 
 
 }
 void checkSpace(int * space){
     //do something
+}
+
+static Token newToken(enum TokenID tkid){
+    Token token;
+    token.id = tkid;
+    strncpy(token.instance, instance, (size_t ) count.strlen);
+    token.lineNumber = count.line;
+
+    // reset c.strlen, instance
+    count.strlen = 0;
+    memset(instance, 0, sizeof(instance));
+
+    return token;
 }

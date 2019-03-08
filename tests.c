@@ -14,9 +14,12 @@ static char emptyStream[] = "";
 static char oneSpaceStream[] = " ";
 static char newLineStream[] = "\n";
 static Token mockEOFtk = {EOFtk, EOF, 0};
+static char singleINTStream[] = "9";
+static char twoDigitINTStream[] = "95";
+
 
 static int testOneCharStream(char[]);
-static int isEOFtk(Token );
+static int isCorrectTkID(Token, enum TokenID);
 static void freeTokenList();
 
 
@@ -36,7 +39,8 @@ static void testReturnToken(char string[]){
 
 void testGetEOFtk(){
     testReturnToken(emptyStream); // calls scanner so clean up after test
-    assert(isEOFtk(tokenList[0]) && "did not get end of file token back");
+    assert(isCorrectTkID(tokenList[0], EOFtk) && "did not get end of file token back");
+    freeTokenList();
 }
 
 static int testOneCharStream(char string[]){
@@ -47,14 +51,27 @@ static int testOneCharStream(char string[]){
     return ch;
 }
 
-static int isEOFtk(Token token){
+static int isCorrectTkID(Token token, enum TokenID tokenID){
     assert(token.lineNumber >= 0 && "why is there a negative line number?");
-    int isTrue = token.id == EOFtk ? 1 : 0;
+    int isTrue = token.id == tokenID ? 1 : 0;
     return isTrue;
 }
-static int numberOfTokens(){
-    return sizeof(tokenList)/ sizeof(Token );
+
+void testINTtks(){
+    testReturnToken(singleINTStream);
+    assert( isCorrectTkID(tokenList[0], INTtk) && "did not return INTtk");
+    assert(isCorrectTkID(tokenList[1], EOFtk) && "did not get end of file token back after INTtk");
+    freeTokenList();
+    testReturnToken(twoDigitINTStream);
+    assert( isCorrectTkID(tokenList[0], INTtk) && "did not return INTtk");
+    assert(isCorrectTkID(tokenList[1], EOFtk) && "did not get end of file token back after twodigit INTtk");
+    freeTokenList();
 }
+
+/***************************************************
+ * free memory after each test
+ *
+ **************************************************/
 static void freeTokenList() {
     free(tokenList);
 }

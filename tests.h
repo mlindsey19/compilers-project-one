@@ -7,6 +7,7 @@
 
 void testSimpleStreams();
 void testGetEOFtk();
+void testINTtks();
 
 
 

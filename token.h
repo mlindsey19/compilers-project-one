@@ -10,7 +10,9 @@
 
 enum TokenID{
     EOFtk,
-    EOLtk
+    OPtk,
+    IDENTtk,
+    INTtk
 };
 typedef struct {
     enum TokenID  id;
