@@ -5,9 +5,16 @@
 #ifndef SCANNER_TESTS_H
 #define SCANNER_TESTS_H
 
+#include "token.h"
 void testSimpleStreams();
 void testGetEOFtk();
 void testINTtks();
+
+//from scanner
+extern Token *tokenList;
+void scanner(FILE * stream);
+
+
 
 
 

@@ -8,7 +8,15 @@
 #include "token.h"
 
 void scanner(FILE * stream);
-extern Token *tokenList;
-
+enum CharacterRank{
+    digit,
+    upCaseLetter,
+    letter,
+    operator,
+    comment,
+    notInAlphabet,
+    whitespace,
+    endOfFile
+};
 
 #endif //SCANNER_SCANNER_H
