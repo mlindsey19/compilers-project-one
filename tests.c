@@ -13,11 +13,16 @@
 static char emptyStream[] = "";
 static char oneSpaceStream[] = " ";
 static char newLineStream[] = "\n";
-static Token mockEOFtk = {EOFtk, EOF, 0};
 static char singleINTStream[] = "9";
 static char twoDigitINTStream[] = "95";
 static char plusTKstream[] = "+";
 static char twoplusTKstream[] = "+ +";
+static char twoplusTKstream2[] = "++";
+
+
+
+
+
 
 
 
@@ -39,13 +44,11 @@ static void testReturnToken( char string[] ){
     scanner( stream );
     fclose( stream );
 }
-
 void testGetEOFtk(){
     testReturnToken( emptyStream ); // calls scanner so clean up after test
     assert( isCorrectTkID( tokenList[ 0 ], EOFtk ) && "did not get end of file token back");
     freeTokenList();
 }
-
 static int testOneCharStream( char string[] ){
     int  ch;
     stream = fmemopen( string, strlen( string ), "r" );
@@ -53,13 +56,11 @@ static int testOneCharStream( char string[] ){
     fclose( stream );
     return ch;
 }
-
 static int isCorrectTkID( Token token, enum TokenID tokenID ){
     assert( token.lineNumber >= 0 && "why is there a negative line number?" );
     int isTrue = token.id == tokenID ? 1 : 0;
     return isTrue;
 }
-
 void testINTtks(){
     testReturnToken( singleINTStream );
     assert( isCorrectTkID( tokenList[ 0 ], INTtk ) && "did not return INTtk" );
@@ -86,10 +87,48 @@ void testOPtks(){
     assert(isCorrectTkID( tokenList[1] , OPtk) && "did not return  2nd two plus token");
     assert( isCorrectTkID( tokenList[ 2 ], EOFtk ) && "did not get end of file token back after two plus tk");
 
+    freeTokenList();
+    testReturnToken(twoplusTKstream2);
+    assert(isCorrectTkID( tokenList[0] , OPtk) && "did not return 1st two plus token no space");
+    assert(isCorrectTkID( tokenList[1] , OPtk) && "did not return  2nd two plus token no space");
+    assert( isCorrectTkID( tokenList[ 2 ], EOFtk ) && "did not get end of file token back after two plus tk no space");
+
     int j = 0 ;
     for(; j < 3 ; j++){
         printf("%s\n", tokenList[j].instance);
     }
+    freeTokenList();
+}
+static char simpleIDENTstram[] = "W";
+static char badIDENTstram[] = "w";
+static char len3IDENTstram[] = "WWW";
+static char twoIDENTstram[] = "W W";
+
+void testIDENTtks(){
+    testReturnToken(simpleIDENTstram);
+    assert( isCorrectTkID( tokenList[ 0 ], IDENTtk) && "did not return simple IDENT token" );
+    assert( isCorrectTkID( tokenList[ 1 ], EOFtk ) && "did not get end of file token back after simple ident" );
+    freeTokenList();
+
+    testReturnToken(len3IDENTstram);
+    assert( isCorrectTkID( tokenList[ 0 ], IDENTtk) && "did not return WWW token" );
+    assert( isCorrectTkID( tokenList[ 1 ], EOFtk ) && "did not get end of file token back after WWW tk" );
+    printf("%s\n", tokenList[ 0 ].instance);
+
+    freeTokenList();
+
+    testReturnToken(twoIDENTstram);
+    assert( isCorrectTkID( tokenList[ 0 ], IDENTtk) && "did not return 1st two IDENT token ");
+    assert( isCorrectTkID( tokenList[ 1 ], IDENTtk) && "did not return  2nd two ident token ");
+    assert( isCorrectTkID( tokenList[ 2 ], EOFtk ) && "did not get end of file token back after two ident" );
+
+    int j = 0 ;
+    for(; j < 3 ; j++){
+        printf("%s\n", tokenList[ j ].instance);
+    }
+    freeTokenList();
+
+    testReturnToken(badIDENTstram);
     freeTokenList();
 }
 

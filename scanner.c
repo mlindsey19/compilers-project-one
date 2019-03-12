@@ -77,7 +77,7 @@ static void letterState(){
 static void operatorState(){
     instance[ count.strlen++ ] = character.this;
     int rank = getRank(character.next);
-    if ( rank == whitespace || rank == endOfFile || rank == digit || rank ==letter )
+    if ( rank == whitespace || rank == endOfFile || rank == digit || rank == letter || rank == operator)
         finalState();
 }
 
@@ -92,7 +92,7 @@ static void getNextCharacter( FILE * stream ){
     if ( character.this != EOF )
         character.next = ( char ) fgetc( stream );
 
-    if (count.strlen == 0){
+    if ( count.strlen == 0 ){
         switch ( getRank( character.this ) ){
             case letter:
                 if ( islower( character.this ) )
@@ -104,8 +104,9 @@ static void getNextCharacter( FILE * stream ){
                 break;
             case digit:
                 currentTkID = INTtk;
+                break;
             case endOfFile:
-                currentTkID = endOfFile;
+                currentTkID = EOFtk;
         }
     }
 }
@@ -117,15 +118,17 @@ static void getNextCharacter( FILE * stream ){
  * to token array
  ********************************************/
 static void finalState(){
+       tokenList[ count.tk++ ] = newToken( currentTkID );
 
-
-    if( character.this == EOF ) {
-        tokenList[ count.tk++ ] = newToken( EOFtk );
-    }else if( getRank( character.this ) == digit ){
-        tokenList[ count.tk++ ] = newToken( INTtk );
-    } else if( getRank( character.this ) == operator ){
-        tokenList [ count.tk ++ ] = newToken( OPtk );
-    }
+//    if( character.this == EOF ) {
+//        tokenList[ count.tk++ ] = newToken( EOFtk );
+//    }else if( getRank( character.this ) == digit ){
+//        tokenList[ count.tk++ ] = newToken( INTtk );
+//    } else if( getRank( character.this ) == operator ){
+//        tokenList [ count.tk ++ ] = newToken( OPtk );
+//    } else if( getRank( character.this ) == letter ){
+//        tokenList [ count.tk ++ ] = newToken( IDENTtk );
+//    }
     count.strlen = 0;
 }
 
@@ -142,7 +145,7 @@ static Token newToken( enum TokenID tkid ){
 
     return token;
 }
-static void getOPstr(){
+static void getOperatorString(){
     switch ( *instance ){
         case PLUS_tk:
             strcpy(instance, toString(PLUS_tk) );
@@ -154,7 +157,7 @@ static void setInstance(enum TokenID tkid){
         count.strlen = 6;
         strcpy(instance, "EOFtk" );
     } else if (tkid == OPtk){
-        getOPstr();
+        getOperatorString();
     }
 }
 static enum CharacterRank getRank( char ch ){

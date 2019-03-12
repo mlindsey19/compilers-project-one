@@ -7,5 +7,6 @@ int main() {
     testGetEOFtk();
     testINTtks();
     testOPtks();
+    testIDENTtks();
     return 0;
 }
