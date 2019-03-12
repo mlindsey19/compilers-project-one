@@ -9,6 +9,7 @@
 void testSimpleStreams();
 void testGetEOFtk();
 void testINTtks();
+void testOPtks();
 
 //from scanner
 extern Token *tokenList;

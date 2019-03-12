@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
+#include <ctype.h>
 
 static void finalState();
 static void checkSpace();
@@ -14,6 +15,8 @@ static Token newToken( enum TokenID );
 static void getNextCharacter( FILE * );
 static void digitState();
 static void letterState();
+static void operatorState();
+static void setInstance( enum TokenID );
 
 
 
@@ -22,23 +25,22 @@ static void letterState();
 Token * tokenList;
 typedef struct { int strlen, line, tk; } Count;
 static  Count count = { 0 , 0 , 0 };
-char instance[ 64 ];
-int hasSeenNext = 0; // 0 -> false, has not seen.  1 -> true, has seen.
-typedef struct { char this, next;} Character;
+char instance[ 32 ];
+typedef struct { char this, next; } Character;
 Character character = { SPACE, SPACE };
 static enum CharacterRank getRank( char );
+enum TokenID currentTkID;
+
 
 
 
 void scanner( FILE * stream ){
     int i, space;
     count.line = count.strlen = count.tk = 0;
-    character.this = character.next = "";
 
     space = 32;
     tokenList = ( Token * ) malloc( sizeof( Token ) * space );
     for( i = 0 ; i < 3 ; i++ ) {
-        //    checkSpace(&space);
         getNextCharacter( stream );
         switch ( getRank( character.this ) ){
             case digit:
@@ -46,6 +48,9 @@ void scanner( FILE * stream ){
                 break;
             case letter:
                 letterState();
+                break;
+            case operator:
+                operatorState();
                 break;
             case endOfFile:
                 finalState();
@@ -64,10 +69,17 @@ static void digitState(){
 }
 static void letterState(){
     instance[ count.strlen++ ] = character.this;
+    int rank = getRank(character.next);
+    if ( rank == whitespace || rank == endOfFile )
+        finalState();
 }
 
-
-
+static void operatorState(){
+    instance[ count.strlen++ ] = character.this;
+    int rank = getRank(character.next);
+    if ( rank == whitespace || rank == endOfFile || rank == digit || rank ==letter )
+        finalState();
+}
 
 /*********************************************
  * get next char and assign character to next
@@ -79,6 +91,23 @@ static void getNextCharacter( FILE * stream ){
     character.this = character.next;
     if ( character.this != EOF )
         character.next = ( char ) fgetc( stream );
+
+    if (count.strlen == 0){
+        switch ( getRank( character.this ) ){
+            case letter:
+                if ( islower( character.this ) )
+                    printf("id token must start with upper case. line: %i\n",count.line);
+                currentTkID = IDENTtk;
+                break;
+            case operator:
+                currentTkID = OPtk;
+                break;
+            case digit:
+                currentTkID = INTtk;
+            case endOfFile:
+                currentTkID = endOfFile;
+        }
+    }
 }
 
 
@@ -91,33 +120,43 @@ static void finalState(){
 
 
     if( character.this == EOF ) {
-        count.strlen = 6;
-        strncpy(instance, "EOFtk", ( size_t ) count.strlen );
         tokenList[ count.tk++ ] = newToken( EOFtk );
-    }else if( character.this >= 48 && character.this <= 57 ){
+    }else if( getRank( character.this ) == digit ){
         tokenList[ count.tk++ ] = newToken( INTtk );
-
+    } else if( getRank( character.this ) == operator ){
+        tokenList [ count.tk ++ ] = newToken( OPtk );
     }
-
-
-}
-void checkSpace( int * space ){
-    //do something
+    count.strlen = 0;
 }
 
 static Token newToken( enum TokenID tkid ){
     Token token;
     token.id = tkid;
-    strncpy( token.instance, instance, ( size_t ) count.strlen);
+    setInstance(tkid);
+    strcpy(token.instance, instance);
     token.lineNumber = count.line;
 
     // reset c.strlen, instance
     count.strlen = 0;
-    memset(instance, 0, sizeof( instance ));
+    memset( instance, 0, sizeof( instance ) );
 
     return token;
 }
-
+static void getOPstr(){
+    switch ( *instance ){
+        case PLUS_tk:
+            strcpy(instance, toString(PLUS_tk) );
+            break;
+    }
+}
+static void setInstance(enum TokenID tkid){
+    if (tkid == EOFtk){
+        count.strlen = 6;
+        strcpy(instance, "EOFtk" );
+    } else if (tkid == OPtk){
+        getOPstr();
+    }
+}
 static enum CharacterRank getRank( char ch ){
     enum CharacterRank rank;
 
@@ -130,12 +169,12 @@ static enum CharacterRank getRank( char ch ){
         rank = letter;
     } else if ( ( ch >= 58 && ch <= 62 )||
                 ( ch >= 40 && ch <= 74 )||
-                  ch == 37 || ch == 123 ||
-                  ch == 125 || ch == 91 ||
-                  ch == 93 ){
+                ch == 37 || ch == 123 ||
+                ch == 125 || ch == 91 ||
+                ch == 93 ){
         rank = operator;
     } else if ( ( ch >= 9 && ch <= 13 )||  //tab,newline,line tab, form feed, carriage return
-               ch == 32 ) {
+                ch == 32 ) {
         rank = whitespace;
     }else if( ch == EOF ) {
         rank = endOfFile;
@@ -144,3 +183,5 @@ static enum CharacterRank getRank( char ch ){
 
     return rank;
 }
+
+

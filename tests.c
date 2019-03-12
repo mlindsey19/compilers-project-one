@@ -9,13 +9,16 @@
 #include <stdlib.h>
 #include "tests.h"
 
+
 static char emptyStream[] = "";
 static char oneSpaceStream[] = " ";
 static char newLineStream[] = "\n";
 static Token mockEOFtk = {EOFtk, EOF, 0};
 static char singleINTStream[] = "9";
 static char twoDigitINTStream[] = "95";
-static char
+static char plusTKstream[] = "+";
+static char twoplusTKstream[] = "+ +";
+
 
 
 static int testOneCharStream( char[] );
@@ -67,6 +70,24 @@ void testINTtks(){
     assert( isCorrectTkID( tokenList[ 1 ], EOFtk ) && "did not get end of file token back after two digit INTtk");
     int j =0;
     for(; j < 2 ; j++){
+        printf("%s\n", tokenList[j].instance);
+    }
+    freeTokenList();
+}
+
+void testOPtks(){
+    testReturnToken(plusTKstream);
+    assert(isCorrectTkID( tokenList[0] , OPtk) && "did not return simple plus token");
+    assert( isCorrectTkID( tokenList[ 1 ], EOFtk ) && "did not get end of file token back after two plus tk");
+
+    freeTokenList();
+    testReturnToken(twoplusTKstream);
+    assert(isCorrectTkID( tokenList[0] , OPtk) && "did not return 1st two plus token");
+    assert(isCorrectTkID( tokenList[1] , OPtk) && "did not return  2nd two plus token");
+    assert( isCorrectTkID( tokenList[ 2 ], EOFtk ) && "did not get end of file token back after two plus tk");
+
+    int j = 0 ;
+    for(; j < 3 ; j++){
         printf("%s\n", tokenList[j].instance);
     }
     freeTokenList();

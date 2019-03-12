@@ -6,5 +6,6 @@ int main() {
     testSimpleStreams();
     testGetEOFtk();
     testINTtks();
+    testOPtks();
     return 0;
 }
