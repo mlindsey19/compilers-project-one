@@ -40,7 +40,7 @@ void scanner( FILE * stream ){
 
     space = 32;
     tokenList = ( Token * ) malloc( sizeof( Token ) * space );
-    for( i = 0 ; i < 3 ; i++ ) {
+    for( i = 0 ; i < 20 ; i++ ) {
         getNextCharacter( stream );
         switch ( getRank( character.this ) ){
             case digit:

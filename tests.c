@@ -10,57 +10,34 @@
 #include "tests.h"
 
 
-static char emptyStream[] = "";
-static char oneSpaceStream[] = " ";
-static char newLineStream[] = "\n";
-static char singleINTStream[] = "9";
-static char twoDigitINTStream[] = "95";
-static char plusTKstream[] = "+";
-static char twoplusTKstream[] = "+ +";
-static char twoplusTKstream2[] = "++";
-
-
-
-
-
-
 
 
 static int testOneCharStream( char[] );
 static int isCorrectTkID( Token, enum TokenID );
 static void freeTokenList();
-
+static void testReturnToken( char[] );
 
 FILE * stream;
 
-
+char emptyStream[] = "";
+char oneSpaceStream[] = " ";
+char newLineStream[] = "\n";
 void testSimpleStreams(){
     assert( ( testOneCharStream( emptyStream ) == EOF ) && "Empty stream did not return EOF");
     assert( ( testOneCharStream( newLineStream ) == EOL ) && "new line did not return EOL");
     assert( ( testOneCharStream( oneSpaceStream ) == SPACE ) && "Empty stream did not return SPACE");
 }
-static void testReturnToken( char string[] ){
-    stream = fmemopen( string, strlen( string ), "r" );
-    scanner( stream );
-    fclose( stream );
-}
+
 void testGetEOFtk(){
     testReturnToken( emptyStream ); // calls scanner so clean up after test
     assert( isCorrectTkID( tokenList[ 0 ], EOFtk ) && "did not get end of file token back");
     freeTokenList();
 }
-static int testOneCharStream( char string[] ){
-    int  ch;
-    stream = fmemopen( string, strlen( string ), "r" );
-    ch = fgetc( stream );
-    fclose( stream );
-    return ch;
-}
-static int isCorrectTkID( Token token, enum TokenID tokenID ){
-    assert( token.lineNumber >= 0 && "why is there a negative line number?" );
-    int isTrue = token.id == tokenID ? 1 : 0;
-    return isTrue;
-}
+
+
+char singleINTStream[] = "9";
+char twoDigitINTStream[] = "95";
+
 void testINTtks(){
     testReturnToken( singleINTStream );
     assert( isCorrectTkID( tokenList[ 0 ], INTtk ) && "did not return INTtk" );
@@ -75,6 +52,10 @@ void testINTtks(){
     }
     freeTokenList();
 }
+
+char plusTKstream[] = "+";
+char twoplusTKstream[] = "+ +";
+char twoplusTKstream2[] = "++";
 
 void testOPtks(){
     testReturnToken(plusTKstream);
@@ -99,10 +80,10 @@ void testOPtks(){
     }
     freeTokenList();
 }
-static char simpleIDENTstram[] = "W";
-static char badIDENTstram[] = "w";
-static char len3IDENTstram[] = "WWW";
-static char twoIDENTstram[] = "W W";
+char simpleIDENTstram[] = "W";
+char badIDENTstram[] = "w";
+char len3IDENTstram[] = "WWW";
+char twoIDENTstram[] = "W W";
 
 void testIDENTtks(){
     testReturnToken(simpleIDENTstram);
@@ -132,10 +113,47 @@ void testIDENTtks(){
     freeTokenList();
 }
 
+char WWWplus33AbCtksStream[] = "WWW + 33 Ab C ";
+
+void testMultipleTks(){
+    testReturnToken(WWWplus33AbCtksStream);
+    assert( isCorrectTkID( tokenList[ 0 ], IDENTtk) && "did not return simple WWW IDENT token in multi" );
+    assert( isCorrectTkID( tokenList[ 1 ], OPtk) && "did not return simple + op token in multi" );
+    assert( isCorrectTkID( tokenList[ 2 ], INTtk) && "did not return simple 33 INt token in multi" );
+    assert( isCorrectTkID( tokenList[ 3 ], IDENTtk) && "did not return simple Ab IDENT token in multi" );
+    assert( isCorrectTkID( tokenList[ 4 ], IDENTtk) && "did not return simple C IDENT token in multi" );
+    assert( isCorrectTkID( tokenList[ 5 ], EOFtk ) && "did not get end of file token back in multi" );
+    int j = 0 ;
+    for(; j < 6 ; j++){
+        printf("%s\n", tokenList[ j ].instance);
+    }
+    freeTokenList();
+}
+
+
+
 /***************************************************
  * free memory after each test
  *
  **************************************************/
 static void freeTokenList() {
     free(tokenList);
+}
+
+static void testReturnToken( char string[] ){
+    stream = fmemopen( string, strlen( string ), "r" );
+    scanner( stream );
+    fclose( stream );
+}
+static int testOneCharStream( char string[] ){
+    int  ch;
+    stream = fmemopen( string, strlen( string ), "r" );
+    ch = fgetc( stream );
+    fclose( stream );
+    return ch;
+}
+static int isCorrectTkID( Token token, enum TokenID tokenID ){
+    assert( token.lineNumber >= 0 && "why is there a negative line number?" );
+    int isTrue = token.id == tokenID ? 1 : 0;
+    return isTrue;
 }

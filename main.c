@@ -8,5 +8,6 @@ int main() {
     testINTtks();
     testOPtks();
     testIDENTtks();
+    testMultipleTks();
     return 0;
 }

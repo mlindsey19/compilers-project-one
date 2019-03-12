@@ -11,6 +11,7 @@ void testGetEOFtk();
 void testINTtks();
 void testOPtks();
 void testIDENTtks();
+void testMultipleTks();
 
 //from scanner
 extern Token *tokenList;
