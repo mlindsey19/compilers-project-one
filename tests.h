@@ -12,6 +12,7 @@ void testINTtks();
 void testOPtks();
 void testIDENTtks();
 void testMultipleTks();
+void testKeywordTKs();
 
 //from scanner
 extern Token *tokenList;

@@ -30,6 +30,7 @@ typedef struct { char this, next; } Character;
 Character character = { SPACE, SPACE };
 static enum CharacterRank getRank( char );
 enum TokenID currentTkID;
+char  keywords[][8] = {"End", "INT", "IFF", "Let", "Loop", "Read", "Void", "Then", "Begin", "Output", "Return", "Program" };
 
 
 
@@ -80,7 +81,32 @@ static void operatorState(){
     if ( rank == whitespace || rank == endOfFile || rank == digit || rank == letter || rank == operator)
         finalState();
 }
+static void compareKw(int a, int b){
+    int i;
+    for (i = a ; i < b; i++){
+        if ( strcmp( instance, keywords[ i ] ) == 0 )
+            strcat(instance,"_tk");
+    }
+}
+static void keywordCheck(){
 
+    switch ( count.strlen ){
+        case 3:
+            compareKw(0,4);
+            break;
+        case 4:
+            compareKw(4, 8);
+            break;
+        case 5:
+            compareKw(8,9);
+            break;
+        case 6:
+            compareKw(9,11);
+            break;
+        case 7:
+            compareKw(11,12);
+    }
+}
 /*********************************************
  * get next char and assign character to next
  * if charter was end of
@@ -107,6 +133,7 @@ static void getNextCharacter( FILE * stream ){
                 break;
             case endOfFile:
                 currentTkID = EOFtk;
+            default: ;
         }
     }
 }
@@ -118,18 +145,9 @@ static void getNextCharacter( FILE * stream ){
  * to token array
  ********************************************/
 static void finalState(){
-       tokenList[ count.tk++ ] = newToken( currentTkID );
-
-//    if( character.this == EOF ) {
-//        tokenList[ count.tk++ ] = newToken( EOFtk );
-//    }else if( getRank( character.this ) == digit ){
-//        tokenList[ count.tk++ ] = newToken( INTtk );
-//    } else if( getRank( character.this ) == operator ){
-//        tokenList [ count.tk ++ ] = newToken( OPtk );
-//    } else if( getRank( character.this ) == letter ){
-//        tokenList [ count.tk ++ ] = newToken( IDENTtk );
-//    }
-    count.strlen = 0;
+    if ( currentTkID == IDENTtk && count.strlen > 2 && count.strlen < 8 )
+        keywordCheck();
+    tokenList[ count.tk++ ] = newToken( currentTkID );
 }
 
 static Token newToken( enum TokenID tkid ){

@@ -27,7 +27,7 @@ enum Operator{
     GREATER_THAN_tk = 62,
     MINUS_tk = 45,
     ASTERISK_tk = 42
-
 };
+
 
 #endif //SCANNER_TOKEN_H

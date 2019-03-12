@@ -9,5 +9,8 @@ int main() {
     testOPtks();
     testIDENTtks();
     testMultipleTks();
+    testKeywordTKs();
+
+
     return 0;
 }

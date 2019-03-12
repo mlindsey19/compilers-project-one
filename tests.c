@@ -129,6 +129,25 @@ void testMultipleTks(){
     }
     freeTokenList();
 }
+char beginKWtkstream[] = "Begin";
+char multikeywordsstream[] = "Let IFF Program Loop";
+void testKeywordTKs(){
+    testReturnToken(beginKWtkstream);
+    assert( isCorrectTkID( tokenList[ 0 ], IDENTtk) && "did not return begin token" );
+    assert( isCorrectTkID( tokenList[ 1 ], EOFtk ) && "did not get end of file token after begin tk" );
+    printf("%s\n", tokenList[ 0 ].instance);
+
+    freeTokenList();
+
+    testReturnToken(multikeywordsstream);
+    assert( isCorrectTkID( tokenList[ 0 ], IDENTtk) && "did not return let token" );
+    assert( isCorrectTkID( tokenList[ 1 ], IDENTtk) && "did not return IFF token" );
+    assert( isCorrectTkID( tokenList[ 2 ], IDENTtk) && "did not return Program token" );
+    assert( isCorrectTkID( tokenList[ 3 ], IDENTtk) && "did not return loop token" );
+    assert( isCorrectTkID( tokenList[ 4 ], EOFtk ) && "did not get end of file token after multi keyword");
+    freeTokenList();
+
+}
 
 
 
