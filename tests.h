@@ -14,6 +14,7 @@ void testIDENTtks();
 void testMultipleTks();
 void testKeywordTKs();
 void testLineNumbers();
+void testCommentStreams();
 
 //from scanner
 extern Token *tokenList;

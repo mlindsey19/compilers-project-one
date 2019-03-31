@@ -11,12 +11,13 @@
 
 static void finalState();
 static Token newToken( enum TokenID );
-static void getNextCharacter( FILE * );
+static void getNextCharacter( FILE *, int );
 static void digitState();
 static void letterState();
 static void operatorState();
 static void setInstance( enum TokenID );
 static void appendToInstance();
+static void commentState( FILE *);
 
 
 Token * tokenList;
@@ -39,7 +40,7 @@ void scanner( FILE * stream ){
     space = 32;
     tokenList = ( Token * ) malloc( sizeof( Token ) * space );
     for( i = 0 ; i < 20 ; i++ ) {
-        getNextCharacter( stream );
+        getNextCharacter( stream , 1 );
         switch ( getRank( character.this ) ){
             case digit:
                 appendToInstance();
@@ -55,27 +56,38 @@ void scanner( FILE * stream ){
                 break;
             case endOfFile:
                 finalState();
+            case comment:
+                commentState(stream);
             default:
                 ;
         }
 
     }
 }
+static void commentState(FILE * stream){
+    int rank;
+    do{
+        getNextCharacter(stream, 0);
+        rank = getRank(character.next);
+    }while( !( rank == newLine || rank == endOfFile ) ) ;
+
+}
 
 static void digitState(){
     int rank = getRank(character.next);
-    if ( rank == whitespace || rank == endOfFile || rank == newLine)
+    if ( rank == whitespace || rank == endOfFile || rank == newLine || rank == comment )
         finalState();
 }
 static void letterState(){
     int rank = getRank(character.next);
-    if ( rank == whitespace || rank == endOfFile || rank == newLine)
+    if ( rank == whitespace || rank == endOfFile || rank == newLine || rank == comment )
         finalState();
 }
 
 static void operatorState(){
     int rank = getRank(character.next);
-    if ( rank == whitespace || rank == endOfFile || rank == digit || rank == letter || rank == operator|| rank == newLine)
+    if ( rank == whitespace || rank == endOfFile || rank == digit
+    || rank == letter || rank == operator|| rank == newLine || rank == comment )
         finalState();
 }
 static void compareKw(int a, int b){
@@ -108,14 +120,14 @@ static void keywordCheck(){
  * get next char and assign character to next
  * if charter was end of
  *********************************************/
-static void getNextCharacter( FILE * stream ){
+static void getNextCharacter( FILE * stream, int isComment){
     if (ftell(stream) == 0)
         character.next = ( char ) fgetc( stream );
     character.this = character.next;
     if ( character.this != EOF )
         character.next = ( char ) fgetc( stream );
 
-    if ( strlen(instance) == 0 ){
+    if ( strlen(instance) == 0 && isComment){
         switch ( getRank( character.this ) ){
             case letter:
                 if ( islower( character.this ) )
@@ -144,7 +156,7 @@ static void getNextCharacter( FILE * stream ){
  * to token array
  ********************************************/
 static void finalState(){
-    if ( currentTkID == IDENTtk && count.strlen > 2 && count.strlen < 8 )
+    if ( currentTkID == IDENTtk && strlen(instance) > 2 && strlen(instance) < 8 )
         keywordCheck();
     tokenList[ count.tk++ ] = newToken( currentTkID );
 }

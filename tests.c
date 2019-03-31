@@ -178,6 +178,39 @@ void testLineNumbers(){
 }
 
 
+char commentStream[] = "\\";
+char commentandtkstream[] = "AB\\";
+char commentand2tkstream[] = "AB\\BA";
+char commentmultilinestream[] = "A\\alskjnierbuaybk skbjfd 43 3k45b 3\n + 234\\6";
+
+void testCommentStreams(){
+    testReturnToken(commentStream);
+    assert( isCorrectTkID( tokenList[ 0 ], EOFtk ) && "did not get end of file token after comment");
+    freeTokenList();
+
+    testReturnToken(commentandtkstream);
+    assert( isCorrectTkID( tokenList[ 0 ], IDENTtk ) && "did not get AB tk before comment");
+    assert( isCorrectTkID( tokenList[ 1 ], EOFtk ) && "did not get end of file token after comment and tk");
+
+    freeTokenList();
+
+    testReturnToken(commentand2tkstream);
+    assert( isCorrectTkID( tokenList[ 0 ], IDENTtk ) && "did not get AB tk before comment");
+    //should skip and only return eof
+    assert( isCorrectTkID( tokenList[ 1 ], EOFtk ) && "did not get end of file token after comment with tk after");
+
+    freeTokenList();
+    testReturnToken(commentmultilinestream);
+    assert(isCorrectTkID(tokenList[ 0 ], IDENTtk)  && "no token for A before comment");
+    assert(isCorrectTkID(tokenList[ 1 ], OPtk)   && tokenList[1].lineNumber == 2
+    && "no optk after comment");
+    assert( isCorrectTkID( tokenList[ 2 ], INTtk ) && "did not get end of file token after comment with tk after");
+    assert( isCorrectTkID( tokenList[ 3 ], EOFtk ) && "did not get end of file token after comment with tk after");
+freeTokenList();
+
+}
+
+
 
 
 

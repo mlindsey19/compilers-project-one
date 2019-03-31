@@ -11,6 +11,7 @@ int main() {
     testMultipleTks();
     testKeywordTKs();
     testLineNumbers();
+    testCommentStreams();
 
 
     return 0;
