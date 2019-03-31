@@ -10,6 +10,7 @@ int main() {
     testIDENTtks();
     testMultipleTks();
     testKeywordTKs();
+    testLineNumbers();
 
 
     return 0;

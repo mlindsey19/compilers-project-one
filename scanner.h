@@ -16,7 +16,9 @@ enum CharacterRank{
     comment,
     notInAlphabet,
     whitespace,
-    endOfFile
+    endOfFile,
+    newLine,
+    newState
 };
 
 #endif //SCANNER_SCANNER_H
