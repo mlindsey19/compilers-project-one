@@ -3,29 +3,29 @@
 #include <string.h>
 #include <memory.h>
 #include <stdlib.h>
-#include <bits/getopt_core.h>
+#include <getopt.h>
 
 
 int main (int argc, char **argv){
 
     int c,j;
 
-//    opterr = 0;
-//    while ((c = getopt(argc, argv, "t")) != -1)
-//        switch (c) {
-//            case 't':
-//                testSimpleStreams();
-//                testGetEOFtk();
-//                testINTtks();
-//                testOPtks();
-//                testIDENTtks();
-//                testMultipleTks();
-//                testKeywordTKs();
-//                testLineNumbers();
-//                testCommentStreams();
-//            default:
-//                abort();
-//        }
+    opterr = 0;
+    while ((c = getopt(argc, argv, "t")) != -1)
+        switch (c) {
+            case 't':
+                testSimpleStreams();
+                testGetEOFtk();
+                testINTtks();
+                testOPtks();
+                testIDENTtks();
+                testMultipleTks();
+                testKeywordTKs();
+                testLineNumbers();
+                testCommentStreams();
+            default:
+                abort();
+        }
     FILE * fp;
     char infile[32];
     char *ext = ".input1";
