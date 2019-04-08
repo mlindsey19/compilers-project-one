@@ -18,25 +18,27 @@ static void operatorState();
 static void setInstance( enum TokenID );
 static void appendToInstance();
 static void commentState( FILE *);
+typedef struct { char this, next; } Character;
+typedef struct { int  line, tk; } Count;
 
 
 Token * tokenList;
-typedef struct { int strlen, line, tk; } Count;
-static  Count count = { 0 , 1 , 0 };
 char instance[ 32 ];
-typedef struct { char this, next; } Character;
 Character character = { SPACE, SPACE };
 static enum CharacterRank getRank( char );
 enum TokenID currentTkID;
 char  keywords[][8] = {"End", "INT", "IFF", "Let", "Loop", "Read", "Void", "Then", "Begin", "Output", "Return", "Program" };
+static  Count count;
 
 
 
 
 void scanner( FILE * stream ){
+
+    count.line = 1;
+    count.tk = 0;
+
     int i, space;
-    count.line = count.strlen = count.tk = 0; // remove later, for tests
-    count.line =1;
     space = 32;
     tokenList = ( Token * ) malloc( sizeof( Token ) * space );
     for( i = 0 ; i < 20 ; i++ ) {
@@ -99,7 +101,7 @@ static void compareKw(int a, int b){
 }
 static void keywordCheck(){
 
-    switch ( count.strlen ){
+    switch ( strlen(instance) ){
         case 3:
             compareKw(0,4);
             break;
@@ -152,8 +154,7 @@ static void getNextCharacter( FILE * stream, int isComment){
 
 /*********************************************
  * final state -
- * determine which token to create and append
- * to token array
+ * check for keywords add to tk array
  ********************************************/
 static void finalState(){
     if ( currentTkID == IDENTtk && strlen(instance) > 2 && strlen(instance) < 8 )
@@ -169,7 +170,6 @@ static Token newToken( enum TokenID tkid ){
     token.lineNumber = count.line;
 
     // reset c.strlen, instance
-    count.strlen = 0;
     memset( instance, 0, sizeof( instance ) );
 
     return token;

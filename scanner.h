@@ -10,15 +10,13 @@
 void scanner(FILE * stream);
 enum CharacterRank{
     digit,
-    upCaseLetter,
     letter,
     operator,
     comment,
     notInAlphabet,
     whitespace,
     endOfFile,
-    newLine,
-    newState
+    newLine
 };
 
 #endif //SCANNER_SCANNER_H
