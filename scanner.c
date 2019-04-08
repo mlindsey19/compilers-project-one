@@ -2,7 +2,6 @@
 // Created by mlind on 3/5/2019.
 //
 
-#include <bits/types/FILE.h>
 #include "scanner.h"
 #include <stdio.h>
 #include <stdlib.h>
