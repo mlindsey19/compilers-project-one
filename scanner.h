@@ -4,6 +4,7 @@
 
 #ifndef SCANNER_SCANNER_H
 #define SCANNER_SCANNER_H
+#include <stdio.h>
 
 #include "token.h"
 

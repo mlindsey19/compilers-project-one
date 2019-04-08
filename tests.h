@@ -5,6 +5,7 @@
 #ifndef SCANNER_TESTS_H
 #define SCANNER_TESTS_H
 
+#include <stdio.h>
 #include "token.h"
 void testSimpleStreams();
 void testGetEOFtk();
