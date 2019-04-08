@@ -7,25 +7,33 @@
 
 
 int main (int argc, char **argv){
-
-    int c,j;
-
-    opterr = 0;
-    while ((c = getopt(argc, argv, "t")) != -1)
-        switch (c) {
-            case 't':
-                testSimpleStreams();
-                testGetEOFtk();
-                testINTtks();
-                testOPtks();
-                testIDENTtks();
-                testMultipleTks();
-                testKeywordTKs();
-                testLineNumbers();
-                testCommentStreams();
-            default:
-                abort();
-        }
+//    testSimpleStreams();
+//    testGetEOFtk();
+//    testINTtks();
+//    testOPtks();
+//    testIDENTtks();
+//    testMultipleTks();
+//    testKeywordTKs();
+//    testLineNumbers();
+//    testCommentStreams();
+//    int c,j;
+//
+//    opterr = 0;
+//    while ((c = getopt(argc, argv, "t")) != -1)
+//        switch (c) {
+//            case 't':
+//                testSimpleStreams();
+//                testGetEOFtk();
+//                testINTtks();
+//                testOPtks();
+//                testIDENTtks();
+//                testMultipleTks();
+//                testKeywordTKs();
+//                testLineNumbers();
+//                testCommentStreams();
+//            default:
+//                abort();
+//        }
     FILE * fp;
     char infile[32];
     char *ext = ".input1";
@@ -44,14 +52,15 @@ int main (int argc, char **argv){
     }
 
     scanner(fp);
-    j = 0;
+    fclose(fp);
+
+    int j = 0;
     while(1){
-        if( strlen( tokenList[ j ].instance ) == 0)
+        printf("%s\n", tokenList[ j ].instance);
+        if( !strcmp( tokenList[ j++ ].instance, "EOFtk" ) )
             break;
-        printf("%s\n", tokenList[ j++ ].instance);
     }
     free(tokenList);
 
-    fclose(fp);
     return 0;
 }

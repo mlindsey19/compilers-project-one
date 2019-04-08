@@ -37,7 +37,7 @@ enum Operator{
     CLOSE_BRACE_tk = 125,
     SEMICOLON_tk = 59,
     OPEN_BRACKET_tk = 91,
-    CLOSE_BRACKET_tk = 92
+    CLOSE_BRACKET_tk = 93
 };
 
 

@@ -29,6 +29,7 @@ static enum CharacterRank getRank( char );
 enum TokenID currentTkID;
 char  keywords[][8] = {"End", "INT", "IFF", "Let", "Loop", "Read", "Void", "Then", "Begin", "Output", "Return", "Program" };
 static  Count count;
+int stop = 1;
 
 
 
@@ -38,10 +39,10 @@ void scanner( FILE * stream ){
     count.line = 1;
     count.tk = 0;
 
-    int i, space;
+    int space;
     space = 32;
     tokenList = ( Token * ) malloc( sizeof( Token ) * space );
-    for( i = 0 ; i < 20 ; i++ ) {
+    while(stop) {
         getNextCharacter( stream , 1 );
         switch ( getRank( character.this ) ){
             case digit:
@@ -82,14 +83,14 @@ static void digitState(){
 }
 static void letterState(){
     int rank = getRank(character.next);
-    if ( rank == whitespace || rank == endOfFile || rank == newLine || rank == comment )
+    if ( rank == whitespace || rank == endOfFile || rank == newLine || rank == comment || rank == operator)
         finalState();
 }
 
 static void operatorState(){
     int rank = getRank(character.next);
     if ( rank == whitespace || rank == endOfFile || rank == digit
-    || rank == letter || rank == operator|| rank == newLine || rank == comment )
+         || rank == letter || rank == operator || rank == newLine || rank == comment )
         finalState();
 }
 static void compareKw(int a, int b){
@@ -133,7 +134,7 @@ static void getNextCharacter( FILE * stream, int isComment){
         switch ( getRank( character.this ) ){
             case letter:
                 if ( islower( character.this ) )
-                    printf("id token must start with upper case. line: %i\n",count.line);
+                    printf("ERROR: id token must start with upper case. line -> %i\n",count.line);
                 currentTkID = IDENTtk;
                 break;
             case operator:
@@ -169,7 +170,6 @@ static Token newToken( enum TokenID tkid ){
     strcpy(token.instance, instance);
     token.lineNumber = count.line;
 
-    // reset c.strlen, instance
     memset( instance, 0, sizeof( instance ) );
 
     return token;
@@ -245,6 +245,7 @@ static void getOperatorString(){
 static void setInstance(enum TokenID tkid){
     if (tkid == EOFtk){
         strcpy(instance, toString(EOFtk) );
+        stop = 0;
     } else if (tkid == OPtk){
         getOperatorString();
     }

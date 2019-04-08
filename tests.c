@@ -154,24 +154,24 @@ char mulitilinestream[] = "1 \n 2 \n3\n4";
 void testLineNumbers(){
     testReturnToken(twolinestream);
     assert( isCorrectTkID( tokenList[ 0 ], IDENTtk) && tokenList[0].lineNumber == 1
-    && "did not return 'A' token" );
+            && "did not return 'A' token" );
     assert( isCorrectTkID( tokenList[ 1 ], IDENTtk) && tokenList[1].lineNumber == 2
-    && "did not return 'B' token" );
+            && "did not return 'B' token" );
     assert( isCorrectTkID( tokenList[ 2 ], EOFtk ) && "did not get end of file token two line");
 
     freeTokenList();
 
     testReturnToken(mulitilinestream);
     assert( isCorrectTkID( tokenList[ 0 ], INTtk) && tokenList[0].lineNumber == 1
-    && "did not return 1 token" );
+            && "did not return 1 token" );
     assert( isCorrectTkID( tokenList[ 1 ], INTtk) && tokenList[1].lineNumber == 2
-    && "did not return 2 token" );
+            && "did not return 2 token" );
     assert( isCorrectTkID( tokenList[ 2 ], INTtk)&& tokenList[2].lineNumber == 3
-    && "did not return 3 token" );
+            && "did not return 3 token" );
     assert( isCorrectTkID( tokenList[ 3 ], INTtk)&& tokenList[3].lineNumber == 4
-    && "did not return 4 token" );
+            && "did not return 4 token" );
     assert( isCorrectTkID( tokenList[ 4 ], EOFtk) && tokenList[4].lineNumber == 4
-    && "did not return eof tk multi lin token" );
+            && "did not return eof tk multi lin token" );
 
     freeTokenList();
 
@@ -181,7 +181,7 @@ void testLineNumbers(){
 char commentStream[] = "\\";
 char commentandtkstream[] = "AB\\";
 char commentand2tkstream[] = "AB\\BA";
-char commentmultilinestream[] = "A\\alskjnierbuaybk skbjfd 43 3k45b 3\n + 234\\6";
+char commentmultilinestream[] = "A\\alskjnierbuaybk skbjfd 43 3k45b 3 \n + 234\\6";
 
 void testCommentStreams(){
     testReturnToken(commentStream);
@@ -203,10 +203,17 @@ void testCommentStreams(){
     testReturnToken(commentmultilinestream);
     assert(isCorrectTkID(tokenList[ 0 ], IDENTtk)  && "no token for A before comment");
     assert(isCorrectTkID(tokenList[ 1 ], OPtk)   && tokenList[1].lineNumber == 2
-    && "no optk after comment");
+           && "no optk after comment");
     assert( isCorrectTkID( tokenList[ 2 ], INTtk ) && "did not get end of file token after comment with tk after");
     assert( isCorrectTkID( tokenList[ 3 ], EOFtk ) && "did not get end of file token after comment with tk after");
-freeTokenList();
+    int j =0;
+    while(1){
+
+        printf("%s\n", tokenList[ j ].instance);
+        if( !strcmp( tokenList[ j++ ].instance, "EOFtk" ) )
+            break;
+    }
+    freeTokenList();
 
 }
 
